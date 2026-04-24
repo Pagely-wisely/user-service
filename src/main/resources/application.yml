@@ -6,10 +6,8 @@ spring:
     name: userservice
   config:
     import:
-      - optional:configserver:http://localhost:8888  # 추가
-      - optional:file:.env[.properties]              # 1. 현재 폴더 기준 (user-service 단독 실행 시)
-      - optional:file:user-service/.env[.properties] # 2. 상위 폴더 기준 (Final 전체 실행 시)
-
+      - optional:configserver:http://localhost:8888
+      - optional:classpath:.env[.properties]
   datasource:
     url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${USER_DB_NAME}
     username: ${DB_USERNAME}
