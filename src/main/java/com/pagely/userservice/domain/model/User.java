@@ -3,6 +3,7 @@ package com.pagely.userservice.domain.model;
 import com.pagely.userservice.domain.model.vo.Password;
 import com.pagely.userservice.temp.entity.BaseEntity;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -29,7 +30,7 @@ public class User extends BaseEntity implements Persistable<UUID> {
     @Column(name = "login_id", nullable = false, length = 50)
     private String loginId;
 
-    @Column(name = "password", nullable = false, length = 255)
+    @Embedded
     private Password password;
 
     @Column(name = "name", nullable = false, length = 100)
