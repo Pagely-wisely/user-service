@@ -30,7 +30,7 @@ jobs:
     env:
       DB_HOST: localhost
       DB_PORT: 5432
-      MEETING_DB_NAME: pagely_user
+      USER_DB_NAME: pagely_user
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
 
