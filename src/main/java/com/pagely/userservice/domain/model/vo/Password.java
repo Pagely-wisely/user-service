@@ -30,8 +30,8 @@ public class Password {
      * @param encoder     해싱에 사용할 인코더 (BCrypt 등)
      */
     public static Password of(String rawPassword, PasswordEncoder encoder) {
-        validatePolicy(rawPassword);
-        return new Password(encoder.encode(rawPassword));
+        String normalized = validatePolicy(rawPassword);
+        return new Password(encoder.encode(normalized));
     }
 
     /**
@@ -51,19 +51,17 @@ public class Password {
     /**
      * 정책 검증 : NIST 가이드
      */
-    private static void validatePolicy(String rawPassword) {
+    private static String validatePolicy(String rawPassword) {
         if (rawPassword == null) {
             throw new IllegalArgumentException("비밀번호는 필수입니다.");
         }
-
-        String trimmed = rawPassword.trim();
-
-        if (trimmed.length() < 10 || trimmed.length() > 64) {
+        if (rawPassword.length() < 10 || rawPassword.length() > 64) {
             throw new IllegalArgumentException("비밀번호는 10자 이상 64자 이하여야 합니다.");
         }
-        if (trimmed.contains(" ")) {
+        if (rawPassword.chars().anyMatch(Character::isWhitespace)) {
             throw new IllegalArgumentException("비밀번호에 공백은 사용할 수 없습니다.");
         }
+        return rawPassword;
     }
 
     // a.equals(b) (a가 null이면 NPE) -> Objects.equalse(a,b) 사용
