@@ -1,12 +1,12 @@
 package com.pagely.userservice.application.service;
 
 import com.pagely.common.exception.BusinessException;
+import com.pagely.userservice.application.dto.SignupCommand;
 import com.pagely.userservice.domain.exception.UserErrorCode;
 import com.pagely.userservice.domain.model.User;
 import com.pagely.userservice.domain.model.vo.Password;
 import com.pagely.userservice.domain.repository.UserRepository;
 import com.pagely.userservice.domain.service.PasswordEncoder;
-import com.pagely.userservice.presentation.dto.request.SignupRequest;
 import com.pagely.userservice.presentation.dto.response.SignupResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,21 +23,21 @@ public class UserApplicationService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public SignupResponse signup(SignupRequest request) {
+    public SignupResponse signup(SignupCommand command) {
         // 1. 중복 검사
-        validateDuplicate(request);
+        validateDuplicate(command);
 
         // 2. 도메인 객체 생성
-        Password password = Password.of(request.password(), passwordEncoder);
+        Password password = Password.of(command.password(), passwordEncoder);
         User user = User.create(
-                request.loginId(),
-                request.email(),
+                command.loginId(),
+                command.email(),
                 password,
-                request.name(),
-                request.nickname(),
-                request.phone(),
-                request.gender(),
-                request.birthDate()
+                command.name(),
+                command.nickname(),
+                command.phone(),
+                command.gender(),
+                command.birthDate()
         );
 
         // 3. 저장 (DB UNIQUE 제약 위반 시 race condition 방어)
@@ -48,22 +48,22 @@ public class UserApplicationService {
         } catch (DataIntegrityViolationException e) {
             // 사전 검사 통과했으나 동시 가입 race condition 발생
             log.warn("회원가입 동시성 충돌: loginId={}, email={}",
-                    request.loginId(), request.email(), e);
-            throw resolveDuplicateException(request, e);
+                    command.loginId(), command.email(), e);
+            throw resolveDuplicateException(command, e);
         }
     }
 
     /**
      * 사전 중복 검사. existsBy* 메서드 활용.
      */
-    private void validateDuplicate(SignupRequest request) {
-        if (userRepository.existsByLoginId(request.loginId())) {
+    private void validateDuplicate(SignupCommand command) {
+        if (userRepository.existsByLoginId(command.loginId())) {
             throw new BusinessException(UserErrorCode.DUPLICATE_LOGIN_ID);
         }
-        if (userRepository.existsByEmail(request.email())) {
+        if (userRepository.existsByEmail(command.email())) {
             throw new BusinessException(UserErrorCode.DUPLICATE_EMAIL);
         }
-        if (userRepository.existsByNickname(request.nickname())) {
+        if (userRepository.existsByNickname(command.nickname())) {
             throw new BusinessException(UserErrorCode.DUPLICATE_NICKNAME);
         }
     }
@@ -72,7 +72,7 @@ public class UserApplicationService {
      * DataIntegrityViolationException의 메시지에서 충돌 컬럼 식별.
      */
     private BusinessException resolveDuplicateException(
-            SignupRequest request,
+            SignupCommand command,
             DataIntegrityViolationException e
     ) {
         String message = e.getMessage() == null ? "" : e.getMessage().toLowerCase();

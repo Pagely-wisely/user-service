@@ -21,10 +21,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserApplicationService userApplicationService;
-    
+
     @PostMapping
     public ResponseEntity<ApiResponse> signup(@Valid @RequestBody SignupRequest request) {
-        SignupResponse response = userApplicationService.signup(request);
+        SignupResponse response = userApplicationService.signup(request.toCommand());
         return ApiResponse.created(response);
     }
 }
