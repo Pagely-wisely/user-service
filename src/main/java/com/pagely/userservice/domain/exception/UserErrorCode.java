@@ -13,6 +13,11 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum UserErrorCode implements ErrorCode {
 
+    // 400 - 잘못된 인수
+    PASSWORD_REQUIRED("비밀번호는 필수입니다.", HttpStatus.BAD_REQUEST),
+    PASSWORD_LENGTH_INVALID("비밀번호는 10자 이상 64자 이하여야 합니다.", HttpStatus.BAD_REQUEST),
+    PASSWORD_WHITESPACE_NOT_ALLOWED("비밀번호에 공백은 사용할 수 없습니다.", HttpStatus.BAD_REQUEST),
+
     // 409 - 회원가입
     DUPLICATE_LOGIN_ID("이미 사용 중인 로그인 아이디입니다.", HttpStatus.CONFLICT),
     DUPLICATE_EMAIL("이미 사용 중인 이메일입니다.", HttpStatus.CONFLICT),
