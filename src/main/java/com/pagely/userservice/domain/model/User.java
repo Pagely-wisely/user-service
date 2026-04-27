@@ -1,7 +1,7 @@
 package com.pagely.userservice.domain.model;
 
+import com.pagely.common.entity.BaseEntity;
 import com.pagely.userservice.domain.model.vo.Password;
-import com.pagely.userservice.temp.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
