@@ -33,7 +33,8 @@ jobs:
       USER_DB_NAME: pagely_user
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
-
+      GPR_USER: ${{ secrets.GPR_USER }}
+      GPR_KEY: ${{ secrets.GPR_KEY }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
