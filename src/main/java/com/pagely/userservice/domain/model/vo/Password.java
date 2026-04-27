@@ -1,5 +1,7 @@
 package com.pagely.userservice.domain.model.vo;
 
+import com.pagely.common.exception.BusinessException;
+import com.pagely.userservice.domain.exception.UserErrorCode;
 import com.pagely.userservice.domain.service.PasswordEncoder;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -53,13 +55,13 @@ public class Password {
      */
     private static String validatePolicy(String rawPassword) {
         if (rawPassword == null) {
-            throw new IllegalArgumentException("비밀번호는 필수입니다.");
+            throw new BusinessException(UserErrorCode.PASSWORD_REQUIRED);
         }
         if (rawPassword.length() < 10 || rawPassword.length() > 64) {
-            throw new IllegalArgumentException("비밀번호는 10자 이상 64자 이하여야 합니다.");
+            throw new BusinessException(UserErrorCode.PASSWORD_LENGTH_INVALID);
         }
         if (rawPassword.chars().anyMatch(Character::isWhitespace)) {
-            throw new IllegalArgumentException("비밀번호에 공백은 사용할 수 없습니다.");
+            throw new BusinessException(UserErrorCode.PASSWORD_WHITESPACE_NOT_ALLOWED);
         }
         return rawPassword;
     }
