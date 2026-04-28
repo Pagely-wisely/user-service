@@ -35,8 +35,8 @@ import java.lang.annotation.Target;
  *
  * @see AuthAspect
  */
-@Target(ElementType.METHOD) // 어노테이션을 어디에 붙일 수 있는지 제한 (메서드에만)
-@Retention(RetentionPolicy.RUNTIME) //
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
 public @interface AuthRequired {
 
     /**
