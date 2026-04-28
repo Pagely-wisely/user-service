@@ -32,6 +32,8 @@ ext {
 
 dependencies {
     implementation "com.pagely:common:1.0.2"
+    // AOP 편의 어노테이션 개발
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
     // jjwt - gateway와 동일한 버전의 jjwt 사용
     implementation "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
     runtimeOnly "io.jsonwebtoken:jjwt-impl:${jjwtVersion}"
