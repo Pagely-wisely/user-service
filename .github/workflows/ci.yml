@@ -35,6 +35,7 @@ jobs:
       DB_PASSWORD: postgres
       GPR_USER: ${{ secrets.GPR_USER }}
       GPR_KEY: ${{ secrets.GPR_KEY }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
