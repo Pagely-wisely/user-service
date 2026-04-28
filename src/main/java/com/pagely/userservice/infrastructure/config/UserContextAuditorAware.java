@@ -1,5 +1,6 @@
 package com.pagely.userservice.infrastructure.config;
 
+import com.pagely.userservice.infrastructure.security.UserContextHolder;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
@@ -16,14 +17,6 @@ public class UserContextAuditorAware implements AuditorAware<UUID> {
     @Override
     public Optional<UUID> getCurrentAuditor() {
         // Filter에서 이미 가공해둔 UserContextHolder(또는 UserContext)를 참조합니다.
-        UUID userId = null; // TODO: 임시 구현
-        // UUID userId = UserContext.getUserId();
-
-        if (userId == null) {
-            // 회원가입 등 인증 정보가 없는 경우
-            return Optional.empty();
-        }
-
-        return Optional.of(userId);
+        return UserContextHolder.findCurrentUserId();
     }
 }
