@@ -63,10 +63,10 @@ public class UserQueryRepositoryImpl implements UserQueryRepository {
                         genderEq(cond.getGender()),
                         isSuspendedEq(cond.getIsSuspended()),
                         keywordSearch(cond.getKeyword()),
-                        createdAtBetween(cond.getCreatedAtFrom(), cond.getCreatedAtTo()),  // 추가
-                        updatedAtBetween(cond.getUpdatedAtFrom(), cond.getUpdatedAtTo()),  // 추가
-                        createdByEq(cond.getCreatedBy()),                                  // 추가
-                        updatedByEq(cond.getUpdatedBy()),                                  // 추가
+                        createdAtBetween(cond.getCreatedAtFrom(), cond.getCreatedAtTo()),
+                        updatedAtBetween(cond.getUpdatedAtFrom(), cond.getUpdatedAtTo()),
+                        createdByEq(cond.getCreatedBy()),
+                        updatedByEq(cond.getUpdatedBy()),
                         isNotDeleted()
                 )
                 .orderBy(user.createdAt.desc())
@@ -88,6 +88,10 @@ public class UserQueryRepositoryImpl implements UserQueryRepository {
                         genderEq(cond.getGender()),
                         isSuspendedEq(cond.getIsSuspended()),
                         keywordSearch(cond.getKeyword()),
+                        createdAtBetween(cond.getCreatedAtFrom(), cond.getCreatedAtTo()),
+                        updatedAtBetween(cond.getUpdatedAtFrom(), cond.getUpdatedAtTo()),
+                        createdByEq(cond.getCreatedBy()),
+                        updatedByEq(cond.getUpdatedBy()),
                         isNotDeleted()
                 )
                 .fetchOne();
