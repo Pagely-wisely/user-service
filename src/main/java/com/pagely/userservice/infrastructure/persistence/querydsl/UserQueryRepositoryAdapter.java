@@ -22,7 +22,7 @@ import org.springframework.util.StringUtils;
 
 @Repository
 @RequiredArgsConstructor
-public class UserQueryRepositoryImpl implements UserQueryRepository {
+public class UserQueryRepositoryAdapter implements UserQueryRepository {
 
     private final JPAQueryFactory queryFactory; // QueryDSL이 제공하는 쿼리 생성 빌더
     private static final QUser user = QUser.user; // APT가 생성한 Q클래스
