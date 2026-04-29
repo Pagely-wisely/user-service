@@ -63,6 +63,7 @@ public class InternalUserController {
      * <ul>
      * <li>성능 보호를 위해 1회 호출 시 <b>최대 1,000건</b>으로 제한됨</li>
      * <li>전체 데이터가 필요할 경우 반복 호출(Paging) 필요</li>
+     * <li>공통 모듈의 PageRequestArgumentResolver는 파라미터 타입이 PageRequest일 때만 동작 (v2.0.0 기준)</li>
      * </ul>
      * </li>
      * </ul>
