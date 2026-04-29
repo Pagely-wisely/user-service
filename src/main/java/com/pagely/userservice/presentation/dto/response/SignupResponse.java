@@ -1,7 +1,7 @@
 package com.pagely.userservice.presentation.dto.response;
 
+import com.pagely.common.auth.Role;
 import com.pagely.userservice.domain.model.Gender;
-import com.pagely.userservice.domain.model.Role;
 import com.pagely.userservice.domain.model.User;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
