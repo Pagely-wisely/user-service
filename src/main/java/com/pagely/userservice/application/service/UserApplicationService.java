@@ -1,7 +1,7 @@
 package com.pagely.userservice.application.service;
 
 import com.pagely.common.exception.BusinessException;
-import com.pagely.userservice.application.dto.SignupCommand;
+import com.pagely.userservice.application.dto.command.SignupCommand;
 import com.pagely.userservice.domain.exception.UserErrorCode;
 import com.pagely.userservice.domain.model.User;
 import com.pagely.userservice.domain.model.vo.Password;

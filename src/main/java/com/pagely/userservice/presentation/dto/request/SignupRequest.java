@@ -1,6 +1,6 @@
 package com.pagely.userservice.presentation.dto.request;
 
-import com.pagely.userservice.application.dto.SignupCommand;
+import com.pagely.userservice.application.dto.command.SignupCommand;
 import com.pagely.userservice.domain.model.Gender;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

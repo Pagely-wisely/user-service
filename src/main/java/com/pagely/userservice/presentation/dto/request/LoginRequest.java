@@ -1,6 +1,6 @@
 package com.pagely.userservice.presentation.dto.request;
 
-import com.pagely.userservice.application.dto.LoginCommand;
+import com.pagely.userservice.application.dto.command.LoginCommand;
 import jakarta.validation.constraints.NotBlank;
 
 /**
