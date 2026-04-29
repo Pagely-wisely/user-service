@@ -1,4 +1,4 @@
-package com.pagely.userservice.application.dto;
+package com.pagely.userservice.application.dto.command;
 
 import com.pagely.userservice.domain.model.Gender;
 import java.time.LocalDate;

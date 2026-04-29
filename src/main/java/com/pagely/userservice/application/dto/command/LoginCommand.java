@@ -1,4 +1,4 @@
-package com.pagely.userservice.application.dto;
+package com.pagely.userservice.application.dto.command;
 
 public record LoginCommand(
         String loginId,
