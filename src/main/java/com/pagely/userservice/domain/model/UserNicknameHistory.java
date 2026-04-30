@@ -2,6 +2,8 @@ package com.pagely.userservice.domain.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
@@ -32,15 +34,16 @@ public class UserNicknameHistory {
     @Column(name = "changed_by", nullable = false)
     private UUID changedBy;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "reason", length = 50)
-    private String reason;
+    private NicknameChangeReason reason;
 
     public static UserNicknameHistory of(
             UUID userId,
             String oldNickname,
             String newNickname,
             UUID changedBy,
-            String reason
+            NicknameChangeReason reason
     ) {
         UserNicknameHistory history = new UserNicknameHistory();
         history.id = UUID.randomUUID();
