@@ -112,11 +112,21 @@ public class User extends BaseEntity implements Persistable<UUID> {
             String phone,
             Gender gender,
             LocalDate birthDate) {
-        this.email = email;
-        this.name = name;
-        this.phone = phone;
-        this.gender = gender;
-        this.birthDate = birthDate;
+        if (email != null) {
+            this.email = email;
+        }
+        if (name != null) {
+            this.name = name;
+        }
+        if (phone != null) {
+            this.phone = phone;
+        }
+        if (gender != null) {
+            this.gender = gender;
+        }
+        if (birthDate != null) {
+            this.birthDate = birthDate;
+        }
     }
 
     /**
@@ -142,16 +152,34 @@ public class User extends BaseEntity implements Persistable<UUID> {
                             Gender gender,
                             LocalDate birthDate,
                             Integer rating,
-                            boolean isSuspended) {
-        this.email = email;
-        this.name = name;
-        this.role = role;
-        this.nickname = nickname;
-        this.phone = phone;
-        this.gender = gender;
-        this.birthDate = birthDate;
-        this.rating = rating;
-        this.isSuspended = isSuspended;
+                            Boolean isSuspended) {
+        if (email != null) {
+            this.email = email;
+        }
+        if (name != null) {
+            this.name = name;
+        }
+        if (role != null) {
+            this.role = role;
+        }
+        if (nickname != null) {
+            this.nickname = nickname;
+        }
+        if (phone != null) {
+            this.phone = phone;
+        }
+        if (gender != null) {
+            this.gender = gender;
+        }
+        if (birthDate != null) {
+            this.birthDate = birthDate;
+        }
+        if (rating != null) {
+            this.rating = rating; // TODO: rating 정책 반영
+        }
+        if (isSuspended != null) {
+            this.isSuspended = isSuspended;
+        }
     }
 
     // ====================================================================
