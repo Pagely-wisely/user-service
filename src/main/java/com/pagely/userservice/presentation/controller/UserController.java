@@ -9,6 +9,8 @@ import com.pagely.userservice.application.dto.query.UserSearchCondition;
 import com.pagely.userservice.application.service.UserApplicationService;
 import com.pagely.userservice.application.service.UserQueryService;
 import com.pagely.userservice.presentation.dto.request.SignupRequest;
+import com.pagely.userservice.presentation.dto.request.UpdateInfoRequest;
+import com.pagely.userservice.presentation.dto.request.UpdateProfileRequest;
 import com.pagely.userservice.presentation.dto.response.AdminUserInfoResponse;
 import com.pagely.userservice.presentation.dto.response.SignupResponse;
 import jakarta.validation.Valid;
@@ -17,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -68,5 +71,26 @@ public class UserController {
                 userQueryService.searchUsers(condition, pageRequest.toPageable()),
                 AdminUserInfoResponse::from
         );
+    }
+
+    // 사용자 본인 정보 수정
+    @AuthRequired
+    @PatchMapping("/me")
+    public ResponseEntity<Void> updateMyProfile(
+            @CurrentUserId UUID currentUserId,
+            @Valid @RequestBody UpdateProfileRequest request) {
+        userApplicationService.updateMyProfile(
+                currentUserId, request.toCommand());
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/{userId}")
+    @AuthRequired(role = Role.MASTER)
+    public ResponseEntity<Void> adminUpdateInfo(
+            @CurrentUserId UUID currentUserId,
+            @PathVariable UUID userId,
+            @Valid @RequestBody UpdateInfoRequest request) {
+        userApplicationService.adminUpdateInfo(currentUserId, userId, request.toCommand());
+        return ResponseEntity.ok().build();
     }
 }

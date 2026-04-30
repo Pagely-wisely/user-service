@@ -4,6 +4,7 @@ import com.pagely.userservice.domain.model.User;
 import com.pagely.userservice.domain.repository.UserRepository;
 import com.pagely.userservice.infrastructure.persistence.jpa.JpaUserRepository;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -16,6 +17,11 @@ public class UserRepositoryAdapter implements UserRepository {
     @Override
     public User save(User user) {
         return jpaUserRepository.save(user);
+    }
+
+    @Override
+    public Optional<User> findById(UUID id) {
+        return jpaUserRepository.findById(id);
     }
 
     @Override

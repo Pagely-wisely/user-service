@@ -144,15 +144,14 @@ public class User extends BaseEntity implements Persistable<UUID> {
     /**
      * 관리자 수정 (관리자가 정책을 뛰어넘어 수정하는 경우)
      */
-    public void adminUpdate(String email,
-                            String name,
-                            Role role,
-                            String nickname,
-                            String phone,
-                            Gender gender,
-                            LocalDate birthDate,
-                            Integer rating,
-                            Boolean isSuspended) {
+    public void adminUpdateInfo(String email,
+                                String name,
+                                Role role,
+                                String phone,
+                                Gender gender,
+                                LocalDate birthDate,
+                                Integer rating,
+                                Boolean isSuspended) {
         if (email != null) {
             this.email = email;
         }
@@ -161,9 +160,6 @@ public class User extends BaseEntity implements Persistable<UUID> {
         }
         if (role != null) {
             this.role = role;
-        }
-        if (nickname != null) {
-            this.nickname = nickname;
         }
         if (phone != null) {
             this.phone = phone;
