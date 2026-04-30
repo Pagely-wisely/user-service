@@ -9,6 +9,6 @@ public record UpdateProfileCommand(
         String phone,
         Gender gender,
         LocalDate birthDate,
-        String nickname    // null이면 서비스에서 changeNickname 호출 안 함
+        String nickname
 ) {
 }
