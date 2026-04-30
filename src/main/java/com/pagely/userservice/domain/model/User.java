@@ -103,6 +103,57 @@ public class User extends BaseEntity implements Persistable<UUID> {
         return user;
     }
 
+    /**
+     * 일반유저 본인 프로필 수정 (본인이 직접 하는 경우)
+     */
+    public void updateMyProfile(
+            String email,
+            String name,
+            String phone,
+            Gender gender,
+            LocalDate birthDate) {
+        this.email = email;
+        this.name = name;
+        this.phone = phone;
+        this.gender = gender;
+        this.birthDate = birthDate;
+    }
+
+    /**
+     * 닉네임은 변경 시점부터 30일 제한과 이력 생성이 수반되는 '정책 필드'이기 때문에,
+     * <p>서비스 레이어에서 명확하게 변경 여부를 대조한 뒤 전용 메서드(changeNickname)를 호출
+     */
+    public void changeNickname(String newNickname) {
+        if (this.nickname.equals(newNickname)) {
+            return;
+        }
+        this.nickname = newNickname;
+    }
+
+
+    /**
+     * 관리자 수정 (관리자가 정책을 뛰어넘어 수정하는 경우)
+     */
+    public void adminUpdate(String email,
+                            String name,
+                            Role role,
+                            String nickname,
+                            String phone,
+                            Gender gender,
+                            LocalDate birthDate,
+                            Integer rating,
+                            boolean isSuspended) {
+        this.email = email;
+        this.name = name;
+        this.role = role;
+        this.nickname = nickname;
+        this.phone = phone;
+        this.gender = gender;
+        this.birthDate = birthDate;
+        this.rating = rating;
+        this.isSuspended = isSuspended;
+    }
+
     // ====================================================================
     // Persistable 구현
     // ====================================================================
