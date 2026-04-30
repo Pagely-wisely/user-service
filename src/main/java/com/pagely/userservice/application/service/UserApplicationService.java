@@ -119,7 +119,7 @@ public class UserApplicationService {
                 .orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
 
         String oldNickname = user.getNickname();
-        if (command.nickname() != null) {
+        if (command.nickname() != null && !command.nickname().equals(oldNickname)) {
             LocalDateTime lastChangedAt = nicknameHistoryRepository
                     .findFirstByUserIdOrderByChangedAtDesc(userId)
                     .map(UserNicknameHistory::getChangedAt)
@@ -155,7 +155,7 @@ public class UserApplicationService {
                 .orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
 
         String oldNickname = user.getNickname();
-        if (command.nickname() != null) {
+        if (command.nickname() != null && !command.nickname().equals(oldNickname)) {
             nicknameHistoryRepository.save(
                     UserNicknameHistory.of(
                             userId,
