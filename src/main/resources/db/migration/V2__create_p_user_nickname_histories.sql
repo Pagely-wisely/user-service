@@ -3,7 +3,7 @@ CREATE TABLE p_user_nickname_histories
     id           UUID PRIMARY KEY,
 
     user_id      UUID        NOT NULL,
-    old_nickname VARCHAR(30) NOT NULL,
+    old_nickname VARCHAR(30) NULL,
     new_nickname VARCHAR(30) NOT NULL,
 
     changed_at   TIMESTAMP   NOT NULL DEFAULT NOW(),
