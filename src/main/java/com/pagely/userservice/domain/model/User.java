@@ -58,14 +58,15 @@ public class User extends BaseEntity implements Persistable<UUID> {
     private LocalDate birthDate;
 
     @Column(name = "rating", nullable = false)
-    private Integer rating;
+    private int rating;
 
     @Column(name = "is_suspended", nullable = false)
-    private Boolean isSuspended;
+    private boolean isSuspended;
 
     // ====================================================================
     // 팩토리 메서드
     // ====================================================================
+    // TODO: 실명이름, 전화번호, 성별, 생년월일 등은 별도 인증 검증을 적용한다.
 
     /**
      * 신규 유저 생성.
@@ -85,7 +86,6 @@ public class User extends BaseEntity implements Persistable<UUID> {
     ) {
         User user = new User();
         user.id = UUID.randomUUID();
-        user.createdBy = user.id;
         user.loginId = loginId;
         user.email = email;
         user.password = hashedPassword;
@@ -97,6 +97,9 @@ public class User extends BaseEntity implements Persistable<UUID> {
         user.birthDate = birthDate;
         user.rating = 1000;
         user.isSuspended = false;
+
+        user.createdBy = user.id;
+        user.updatedBy = user.id;
         return user;
     }
 
