@@ -33,7 +33,7 @@ public record UserInfoResponse(
                 user.getGender(),
                 user.getBirthDate(),
                 user.getRating(),
-                user.getIsSuspended(),
+                user.isSuspended(),
                 user.getCreatedAt()
         );
     }

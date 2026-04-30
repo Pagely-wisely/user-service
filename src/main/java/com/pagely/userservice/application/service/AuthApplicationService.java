@@ -54,7 +54,7 @@ public class AuthApplicationService {
         }
 
         // 3. 정지 계정 차단
-        if (user.getIsSuspended()) {
+        if (user.isSuspended()) {
             log.warn("로그인 실패 - 정지 계정 시도: userId={}", user.getId());
             throw new BusinessException(UserErrorCode.USER_SUSPENDED);
         }
