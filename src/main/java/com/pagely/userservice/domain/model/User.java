@@ -58,14 +58,15 @@ public class User extends BaseEntity implements Persistable<UUID> {
     private LocalDate birthDate;
 
     @Column(name = "rating", nullable = false)
-    private Integer rating;
+    private int rating;
 
     @Column(name = "is_suspended", nullable = false)
-    private Boolean isSuspended;
+    private boolean isSuspended;
 
     // ====================================================================
     // 팩토리 메서드
     // ====================================================================
+    // TODO: 실명이름, 전화번호, 성별, 생년월일 등은 별도 인증 검증을 적용한다.
 
     /**
      * 신규 유저 생성.
@@ -85,7 +86,6 @@ public class User extends BaseEntity implements Persistable<UUID> {
     ) {
         User user = new User();
         user.id = UUID.randomUUID();
-        user.createdBy = user.id;
         user.loginId = loginId;
         user.email = email;
         user.password = hashedPassword;
@@ -97,7 +97,85 @@ public class User extends BaseEntity implements Persistable<UUID> {
         user.birthDate = birthDate;
         user.rating = 1000;
         user.isSuspended = false;
+
+        user.createdBy = user.id;
+        user.updatedBy = user.id;
         return user;
+    }
+
+    /**
+     * 일반유저 본인 프로필 수정 (본인이 직접 하는 경우)
+     */
+    public void updateMyProfile(
+            String email,
+            String name,
+            String phone,
+            Gender gender,
+            LocalDate birthDate) {
+        if (email != null) {
+            this.email = email;
+        }
+        if (name != null) {
+            this.name = name;
+        }
+        if (phone != null) {
+            this.phone = phone;
+        }
+        if (gender != null) {
+            this.gender = gender;
+        }
+        if (birthDate != null) {
+            this.birthDate = birthDate;
+        }
+    }
+
+    /**
+     * 닉네임은 변경 시점부터 30일 제한과 이력 생성이 수반되는 '정책 필드'이기 때문에,
+     * <p>서비스 레이어에서 명확하게 변경 여부를 대조한 뒤 전용 메서드(changeNickname)를 호출
+     */
+    public void changeNickname(String newNickname) {
+        if (this.nickname.equals(newNickname)) {
+            return;
+        }
+        this.nickname = newNickname;
+    }
+
+
+    /**
+     * 관리자 수정 (관리자가 정책을 뛰어넘어 수정하는 경우)
+     */
+    public void adminUpdateInfo(String email,
+                                String name,
+                                Role role,
+                                String phone,
+                                Gender gender,
+                                LocalDate birthDate,
+                                Integer rating,
+                                Boolean isSuspended) {
+        if (email != null) {
+            this.email = email;
+        }
+        if (name != null) {
+            this.name = name;
+        }
+        if (role != null) {
+            this.role = role;
+        }
+        if (phone != null) {
+            this.phone = phone;
+        }
+        if (gender != null) {
+            this.gender = gender;
+        }
+        if (birthDate != null) {
+            this.birthDate = birthDate;
+        }
+        if (rating != null) {
+            this.rating = rating; // TODO: rating 정책 반영
+        }
+        if (isSuspended != null) {
+            this.isSuspended = isSuspended;
+        }
     }
 
     // ====================================================================

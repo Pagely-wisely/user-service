@@ -36,7 +36,7 @@ public record AdminUserInfoResponse(
                 user.getGender(),
                 user.getBirthDate(),
                 user.getRating(),
-                user.getIsSuspended(),
+                user.isSuspended(),
                 user.getCreatedAt(),
                 user.getCreatedBy(),
                 user.getUpdatedAt(),
