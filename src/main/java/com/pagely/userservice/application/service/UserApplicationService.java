@@ -1,5 +1,7 @@
 package com.pagely.userservice.application.service;
 
+import com.pagely.common.auth.UserContext;
+import com.pagely.common.auth.UserContextHolder;
 import com.pagely.common.exception.BusinessException;
 import com.pagely.userservice.application.dto.command.SignupCommand;
 import com.pagely.userservice.application.dto.command.UpdateInfoCommand;
@@ -53,7 +55,8 @@ public class UserApplicationService {
                 user.getId(),
                 NicknameChangeReason.CREATE
         );
-
+        // AuditorAware가 신규 유저 본인 ID를 읽어갈 수 있도록 컨텍스트 주입
+        UserContextHolder.set(new UserContext(user.getId(), user.getRole()));
         try {
             User saved = userRepository.save(user); // save() 대신 saveAndFlush()를 사용하여 즉시 제약 조건을 검사함
             nicknameHistoryRepository.save(nicknameHistory);
@@ -61,6 +64,8 @@ public class UserApplicationService {
             return SignupResponse.from(saved);
         } catch (DataIntegrityViolationException e) {
             throw resolveDuplicateException(e);
+        } finally {
+            UserContextHolder.clear(); // ThreadLocal 정리
         }
     }
 
