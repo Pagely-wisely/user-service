@@ -38,31 +38,16 @@ public class UserController {
     private final UserApplicationService userApplicationService;
     private final UserQueryService userQueryService;
 
+    // [생성] 회원가입
     @PostMapping
     public ResponseEntity<ApiResponse> signup(@Valid @RequestBody SignupRequest request) {
         SignupResponse response = userApplicationService.signup(request.toCommand());
         return ApiResponse.created(response);
     }
 
-    // 사용자 단건 조회
-    @AuthRequired
+    // [목록 조회] 전체 사용자 목록 (관리자용)
     @GetMapping
-    public ResponseEntity<ApiResponse> getUser(
-            @CurrentUserId UUID currentUserId) {
-        return ApiResponse.ok(userQueryService.getUser(currentUserId));
-    }
-
-    // 관리자용 단건 조회
     @AuthRequired(role = Role.MASTER)
-    @GetMapping("/admin/{userId}")
-    public ResponseEntity<ApiResponse> getAdminUser(@PathVariable UUID userId
-    ) {
-        return ApiResponse.ok(userQueryService.getUserDetail(userId));
-    }
-
-    // 관리자용 목록 조회
-    @AuthRequired(role = Role.MASTER)
-    @GetMapping("/admin")
     public ResponseEntity<ApiResponse> searchUsers(
             UserSearchCondition condition,
             PageRequest pageRequest
@@ -73,17 +58,14 @@ public class UserController {
         );
     }
 
-    // 사용자 본인 정보 수정
-    @AuthRequired
-    @PatchMapping("/me")
-    public ResponseEntity<Void> updateMyProfile(
-            @CurrentUserId UUID currentUserId,
-            @Valid @RequestBody UpdateProfileRequest request) {
-        userApplicationService.updateMyProfile(
-                currentUserId, request.toCommand());
-        return ResponseEntity.ok().build();
+    // [단건 조회] 특정 사용자 조회 (관리자용)
+    @GetMapping("/{userId}")
+    @AuthRequired(role = Role.MASTER)
+    public ResponseEntity<ApiResponse> getAdminUser(@PathVariable UUID userId) {
+        return ApiResponse.ok(userQueryService.getUserDetail(userId));
     }
 
+    // [단건 수정] 특정 사용자 정보 수정 (관리자용)
     @PatchMapping("/{userId}")
     @AuthRequired(role = Role.MASTER)
     public ResponseEntity<Void> adminUpdateInfo(
@@ -91,6 +73,25 @@ public class UserController {
             @PathVariable UUID userId,
             @Valid @RequestBody UpdateInfoRequest request) {
         userApplicationService.adminUpdateInfo(currentUserId, userId, request.toCommand());
+        return ResponseEntity.ok().build();
+    }
+
+    // [단건 조회] 내 정보 조회
+    @GetMapping("/me")
+    @AuthRequired
+    public ResponseEntity<ApiResponse> getUser(
+            @CurrentUserId UUID currentUserId) {
+        return ApiResponse.ok(userQueryService.getUser(currentUserId));
+    }
+
+    // [단건 수정] 내 정보 수정
+    @PatchMapping("/me")
+    @AuthRequired
+    public ResponseEntity<Void> updateMyProfile(
+            @CurrentUserId UUID currentUserId,
+            @Valid @RequestBody UpdateProfileRequest request) {
+        userApplicationService.updateMyProfile(
+                currentUserId, request.toCommand());
         return ResponseEntity.ok().build();
     }
 }
