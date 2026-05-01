@@ -34,10 +34,6 @@ public class UserApplicationService {
 
     @Transactional
     public SignupResponse signup(SignupCommand command) {
-        // 1. 중복 검사
-        validateDuplicate(command);
-
-        // 2. 도메인 객체 생성
         Password password = Password.of(command.password(), passwordEncoder);
         User user = User.create(
                 command.loginId(),
@@ -58,57 +54,14 @@ public class UserApplicationService {
                 NicknameChangeReason.CREATE
         );
 
-        // 3. 저장 (DB UNIQUE 제약 위반 시 race condition 방어)
         try {
-            User saved = userRepository.save(user);
+            User saved = userRepository.save(user); // save() 대신 saveAndFlush()를 사용하여 즉시 제약 조건을 검사함
             nicknameHistoryRepository.save(nicknameHistory);
             eventPublisher.publishEvent(UserCreatedEvent.from(saved));
             return SignupResponse.from(saved);
         } catch (DataIntegrityViolationException e) {
-            // 사전 검사 통과했으나 동시 가입 race condition 발생
-            log.warn("회원가입 동시성 충돌: loginId={}, email={}",
-                    command.loginId(), command.email(), e);
-            // @Transactional에 의해 User와 History 모두를 롤백
-            throw resolveDuplicateException(command, e);
+            throw resolveDuplicateException(e);
         }
-    }
-
-    /**
-     * 사전 중복 검사. existsBy* 메서드 활용.
-     */
-    private void validateDuplicate(SignupCommand command) {
-        if (userRepository.existsByLoginId(command.loginId())) {
-            throw new BusinessException(UserErrorCode.DUPLICATE_LOGIN_ID);
-        }
-        if (userRepository.existsByEmail(command.email())) {
-            throw new BusinessException(UserErrorCode.DUPLICATE_EMAIL);
-        }
-        if (userRepository.existsByNickname(command.nickname())) {
-            throw new BusinessException(UserErrorCode.DUPLICATE_NICKNAME);
-        }
-    }
-
-    /**
-     * DataIntegrityViolationException의 메시지에서 충돌 컬럼 식별.
-     */
-    private BusinessException resolveDuplicateException(
-            SignupCommand command,
-            DataIntegrityViolationException e
-    ) {
-        String message = e.getMessage() == null ? "" : e.getMessage().toLowerCase();
-
-        if (message.contains("login_id")) {
-            return new BusinessException(UserErrorCode.DUPLICATE_LOGIN_ID, e);
-        }
-        if (message.contains("email")) {
-            return new BusinessException(UserErrorCode.DUPLICATE_EMAIL, e);
-        }
-        if (message.contains("nickname")) {
-            return new BusinessException(UserErrorCode.DUPLICATE_NICKNAME, e);
-        }
-
-        // 어느 컬럼인지 모르면 일반 충돌로 처리
-        return new BusinessException(UserErrorCode.DUPLICATE_LOGIN_ID, e);
     }
 
     /**
@@ -129,6 +82,7 @@ public class UserApplicationService {
                     .map(UserNicknameHistory::getChangedAt)
                     .orElse(null);
             validateNickname30Days(lastChangedAt);
+
             user.changeNickname(command.nickname());
 
             nicknameHistoryRepository.save(UserNicknameHistory.of(
@@ -144,6 +98,12 @@ public class UserApplicationService {
                 command.gender(),
                 command.birthDate()
         );
+        try {
+            userRepository.save(user);
+
+        } catch (DataIntegrityViolationException e) {
+            throw resolveDuplicateException(e);
+        }
     }
 
     /**
@@ -182,6 +142,11 @@ public class UserApplicationService {
                 command.rating(),
                 command.isSuspended()
         );
+        try {
+            userRepository.save(user);
+        } catch (DataIntegrityViolationException e) {
+            throw resolveDuplicateException(e);
+        }
     }
 
     /**
@@ -192,5 +157,28 @@ public class UserApplicationService {
         if (lastChangedAt != null && lastChangedAt.plusDays(30).isAfter(LocalDateTime.now())) {
             throw new BusinessException(UserErrorCode.NICKNAME_CHANGE_LIMIT);
         }
+    }
+
+    /**
+     * DataIntegrityViolationException의 메시지에서 충돌 컬럼 식별.
+     */
+    private BusinessException resolveDuplicateException(DataIntegrityViolationException e) {
+        String message = e.getMessage() == null ? "" : e.getMessage().toLowerCase();
+
+        //log.error("=== DataIntegrityViolation message: {}", message); // 임시 로그 추가
+
+        // constraint [...] 부분만 추출해서 판단
+        if (message.contains("uk_p_users_login_id")) {
+            return new BusinessException(UserErrorCode.DUPLICATE_LOGIN_ID, e);
+        }
+        if (message.contains("uk_p_users_email")) {
+            return new BusinessException(UserErrorCode.DUPLICATE_EMAIL, e);
+        }
+        if (message.contains("uk_p_users_nickname")) {
+            return new BusinessException(UserErrorCode.DUPLICATE_NICKNAME, e);
+        }
+
+        // 어느 컬럼인지 모르면 일반 충돌로 처리
+        return new BusinessException(UserErrorCode.DUPLICATE, e);
     }
 }

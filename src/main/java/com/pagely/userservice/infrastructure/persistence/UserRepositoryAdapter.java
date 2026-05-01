@@ -16,7 +16,7 @@ public class UserRepositoryAdapter implements UserRepository {
 
     @Override
     public User save(User user) {
-        return jpaUserRepository.save(user);
+        return jpaUserRepository.saveAndFlush(user); // DataIntegrityViolationException catch
     }
 
     @Override
