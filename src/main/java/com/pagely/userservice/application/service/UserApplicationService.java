@@ -12,11 +12,13 @@ import com.pagely.userservice.domain.model.vo.Password;
 import com.pagely.userservice.domain.repository.UserNicknameHistoryRepository;
 import com.pagely.userservice.domain.repository.UserRepository;
 import com.pagely.userservice.domain.service.PasswordEncoder;
+import com.pagely.userservice.infrastructure.messaging.event.UserCreatedEvent;
 import com.pagely.userservice.presentation.dto.response.SignupResponse;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserApplicationService {
     private final UserNicknameHistoryRepository nicknameHistoryRepository;
     private final UserRepository userRepository;
+    private final ApplicationEventPublisher eventPublisher;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
@@ -59,6 +62,7 @@ public class UserApplicationService {
         try {
             User saved = userRepository.save(user);
             nicknameHistoryRepository.save(nicknameHistory);
+            eventPublisher.publishEvent(UserCreatedEvent.from(saved));
             return SignupResponse.from(saved);
         } catch (DataIntegrityViolationException e) {
             // 사전 검사 통과했으나 동시 가입 race condition 발생
