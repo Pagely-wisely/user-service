@@ -44,3 +44,40 @@ CREATE UNIQUE INDEX uk_p_users_email
 
 CREATE UNIQUE INDEX uk_p_users_nickname
     ON p_users (nickname) WHERE deleted_at IS NULL;
+
+-- ============================================================
+-- MASTER 계정 초기화
+-- Flyway Placeholder 기능으로 환경변수 주입
+-- ============================================================
+
+INSERT INTO p_users (
+    id,
+    login_id,
+    password,
+    name,
+    role,
+    nickname,
+    email,
+    phone,
+    gender,
+    birth_date,
+    rating,
+    is_suspended,
+    created_at,
+    created_by
+) VALUES (
+             '11111111-1111-1111-1111-111111111111',
+             '${adminId}',
+             '${encodedPassword}',  -- Spring 에서 암호화한 뒤 변수로 넘겨줌
+             '관라자',
+             'MASTER',
+             'Admin',
+             'admin@pagely.com',
+             '010-0000-0000',
+             'MALE',
+             '1990-01-01',
+             9999,
+             false,
+             NOW(),
+             '00000000-0000-0000-0000-000000000000'
+         );

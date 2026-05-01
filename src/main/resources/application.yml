@@ -58,3 +58,7 @@ eureka:
     fetch-registry: true
     serviceUrl:
       defaultZone: ${EUREKA_SERVER_URL:http://localhost:8000/eureka/}
+init:
+  admin:
+    id: ${ADMIN_ID}
+    password: ${ADMIN_PASSWORD}
