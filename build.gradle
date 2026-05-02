@@ -31,7 +31,9 @@ ext {
 }
 
 dependencies {
-    implementation "com.pagely:common:2.0.0"
+    implementation "com.pagely:common:2.0.1"
+    // Kafka
+    implementation 'org.springframework.kafka:spring-kafka'
     // QueryDSL (core는 common에서 전파, jpa+apt만 추가)
     implementation 'com.querydsl:querydsl-jpa:5.1.0:jakarta'
     annotationProcessor 'com.querydsl:querydsl-apt:5.1.0:jakarta'

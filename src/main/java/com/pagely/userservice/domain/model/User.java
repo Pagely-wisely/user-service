@@ -97,9 +97,7 @@ public class User extends BaseEntity implements Persistable<UUID> {
         user.birthDate = birthDate;
         user.rating = 1000;
         user.isSuspended = false;
-
-        user.createdBy = user.id;
-        user.updatedBy = user.id;
+        
         return user;
     }
 
