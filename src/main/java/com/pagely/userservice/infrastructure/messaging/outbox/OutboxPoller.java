@@ -2,6 +2,8 @@ package com.pagely.userservice.infrastructure.messaging.outbox;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -30,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class OutboxPoller {
 
     private static final int BATCH_SIZE = 100;
+    private static final long SEND_TIMEOUT_SECONDS = 10;
 
     private final OutboxRepository outboxRepository;
     private final KafkaTemplate<String, String> kafkaTemplate;
@@ -61,13 +64,13 @@ public class OutboxPoller {
         log.debug("Outbox 발행 완료: count={}", events.size());
     }
 
-    private void publishToKafka(OutboxEvent event) throws ExecutionException, InterruptedException {
+    private void publishToKafka(OutboxEvent event) throws ExecutionException, InterruptedException, TimeoutException {
         String topic = event.getTopic();
         String messageKey = event.getAggregateId().toString();
         String payload = event.getPayload();
 
         // 동기 발행 — 실패 시 즉시 catch 가능 (성능보다 신뢰성 우선)
-        kafkaTemplate.send(topic, messageKey, payload).get();
+        kafkaTemplate.send(topic, messageKey, payload).get(SEND_TIMEOUT_SECONDS, TimeUnit.SECONDS);
 
         log.debug("Kafka 발행 성공: topic={}, key={}, eventType={}",
                 topic, messageKey, event.getEventType());
