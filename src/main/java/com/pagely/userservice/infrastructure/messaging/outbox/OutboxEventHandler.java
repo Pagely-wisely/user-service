@@ -14,13 +14,13 @@ import org.springframework.transaction.event.TransactionalEventListener;
 /**
  * 도메인 이벤트를 Outbox 테이블에 저장하는 핸들러.
  *
- * <p><b>동작 흐름</b></p>
- * <ol>
- *   <li>도메인 서비스가 ApplicationEventPublisher 로 이벤트 발행</li>
- *   <li>이 핸들러가 BEFORE_COMMIT 시점에 호출됨 → 같은 트랜잭션 안에서 처리</li>
- *   <li>JSON 직렬화 → 토픽 결정 → Outbox 저장</li>
- *   <li>도메인 트랜잭션 커밋 시 User + Outbox 함께 커밋 (원자성)</li>
- * </ol>
+ * <p><b>구독 정책</b></p>
+ * 구체 이벤트 타입별로 메서드 분리:
+ * <ul>
+ *   <li>새 이벤트 추가 시 새 메서드 추가 (컴파일러가 타입 검증)</li>
+ *   <li>미지원 이벤트는 자동으로 무시 (도메인 트랜잭션 영향 X)</li>
+ *   <li>BEFORE_COMMIT 이라 도메인 트랜잭션과 원자성 보장</li>
+ * </ul>
  *
  * <p>실제 Kafka 발행은 별도 OutboxPoller 가 담당 (Outbox 패턴).</p>
  */
@@ -33,10 +33,16 @@ public class OutboxEventHandler {
     private final ObjectMapper objectMapper;
 
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
-    public void onDomainEvent(BaseEvent event) {
+    public void onUserCreated(UserCreatedEvent event) {
+        saveOutbox(event, UserCreatedEvent.TOPIC);
+    }
+
+    /**
+     * 공통 처리 로직 — 직렬화 + Outbox 저장.
+     */
+    private void saveOutbox(BaseEvent event, String topic) {
         try {
             String payload = objectMapper.writeValueAsString(event);
-            String topic = resolveTopic(event);
             UUID aggregateId = UUID.fromString(event.getDomainId());
 
             OutboxEvent outbox = OutboxEvent.of(
@@ -54,17 +60,5 @@ public class OutboxEventHandler {
             log.error("이벤트 직렬화 실패: eventType={}", event.getEventType(), e);
             throw new IllegalStateException("이벤트 직렬화 실패: " + event.getEventType(), e);
         }
-    }
-
-    /**
-     * 이벤트 타입에 따른 Kafka 토픽 결정.
-     */
-    private String resolveTopic(BaseEvent event) {
-        return switch (event.getEventType()) {
-            case "UserCreatedEvent" -> UserCreatedEvent.TOPIC;
-            // TODO: case "UserProfileUpdatedEvent" -> UserProfileUpdatedEvent.TOPIC;
-            default -> throw new IllegalArgumentException(
-                    "Unsupported event type: " + event.getEventType());
-        };
     }
 }

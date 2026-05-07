@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * Spring Data JPA OutboxEvent Repository.
@@ -38,5 +39,5 @@ public interface JpaOutboxRepository extends JpaRepository<OutboxEvent, UUID> {
               AND e.deletedAt IS NULL
             ORDER BY e.lastFailureAt DESC
             """)
-    List<OutboxEvent> findFailedExceedingThreshold(int threshold, Pageable pageable);
+    List<OutboxEvent> findFailedExceedingThreshold(@Param("threshold") int threshold, Pageable pageable);
 }
