@@ -52,7 +52,6 @@ public class UserApplicationService {
                 user.getId(),
                 null,
                 user.getNickname(),
-                user.getId(),
                 NicknameChangeReason.CREATE
         );
         // AuditorAware가 신규 유저 본인 ID를 읽어갈 수 있도록 컨텍스트 주입
@@ -83,8 +82,8 @@ public class UserApplicationService {
         String oldNickname = user.getNickname();
         if (command.nickname() != null && !command.nickname().equals(oldNickname)) {
             LocalDateTime lastChangedAt = nicknameHistoryRepository
-                    .findFirstByUserIdOrderByChangedAtDesc(userId)
-                    .map(UserNicknameHistory::getChangedAt)
+                    .findFirstByUserIdOrderByCreatedAtDesc(userId)
+                    .map(UserNicknameHistory::getCreatedAt)
                     .orElse(null);
             validateNickname30Days(lastChangedAt);
 
@@ -92,7 +91,7 @@ public class UserApplicationService {
 
             nicknameHistoryRepository.save(UserNicknameHistory.of(
                     userId, oldNickname, command.nickname(),
-                    userId, NicknameChangeReason.USER_CHANGE
+                    NicknameChangeReason.USER_CHANGE
             ));
         }
 
@@ -130,7 +129,6 @@ public class UserApplicationService {
                             userId,
                             oldNickname,
                             command.nickname(),
-                            currentUserId,
                             NicknameChangeReason.ADMIN_CHANGE
                     )
             );

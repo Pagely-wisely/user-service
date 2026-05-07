@@ -1,8 +1,10 @@
 package com.pagely.userservice.infrastructure.messaging.outbox;
 
-import com.pagely.common.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
@@ -12,7 +14,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-import org.springframework.data.domain.Persistable;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * Outbox 패턴의 이벤트 저장 엔티티.
@@ -35,10 +38,11 @@ import org.springframework.data.domain.Persistable;
 @Getter
 @Table(name = "p_outbox")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class OutboxEvent extends BaseEntity implements Persistable<UUID> {
+@EntityListeners(AuditingEntityListener.class)
+public class OutboxEvent {
 
     @Id
-    @Column(columnDefinition = "UUID")
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(name = "aggregate_type", nullable = false, length = 50)
@@ -75,6 +79,9 @@ public class OutboxEvent extends BaseEntity implements Persistable<UUID> {
     @Column(name = "last_failure_message", columnDefinition = "TEXT")
     private String lastFailureMessage;
 
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
     // ====================================================================
     // 팩토리 메서드
     // ====================================================================
@@ -106,7 +113,6 @@ public class OutboxEvent extends BaseEntity implements Persistable<UUID> {
         }
 
         OutboxEvent event = new OutboxEvent();
-        event.id = UUID.randomUUID();
         event.aggregateType = aggregateType;
         event.aggregateId = aggregateId;
         event.eventType = eventType;
@@ -146,12 +152,4 @@ public class OutboxEvent extends BaseEntity implements Persistable<UUID> {
         return message.length() > 2000 ? message.substring(0, 2000) : message;
     }
 
-    // ====================================================================
-    // Persistable 구현
-    // ====================================================================
-
-    @Override
-    public boolean isNew() {
-        return getCreatedAt() == null;
-    }
 }

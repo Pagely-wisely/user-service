@@ -24,7 +24,6 @@ public interface JpaOutboxRepository extends JpaRepository<OutboxEvent, UUID> {
     @Query("""
             SELECT e FROM OutboxEvent e
             WHERE e.published = false
-              AND e.deletedAt IS NULL
             ORDER BY e.createdAt ASC
             """)
     List<OutboxEvent> findUnpublished(Pageable pageable);
@@ -36,7 +35,6 @@ public interface JpaOutboxRepository extends JpaRepository<OutboxEvent, UUID> {
             SELECT e FROM OutboxEvent e
             WHERE e.published = false
               AND e.failureCount >= :threshold
-              AND e.deletedAt IS NULL
             ORDER BY e.lastFailureAt DESC
             """)
     List<OutboxEvent> findFailedExceedingThreshold(@Param("threshold") int threshold, Pageable pageable);
