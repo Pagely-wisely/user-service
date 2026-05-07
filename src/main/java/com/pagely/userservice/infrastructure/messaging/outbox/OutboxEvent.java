@@ -42,7 +42,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class OutboxEvent {
 
     @Id
-    @Column(columnDefinition = "UUID")
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
