@@ -2,8 +2,11 @@ package com.pagely.userservice.domain.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
@@ -11,14 +14,19 @@ import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
 @Entity
 @Table(name = "p_user_nickname_histories")
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserNicknameHistory {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(name = "user_id", nullable = false)
@@ -30,11 +38,13 @@ public class UserNicknameHistory {
     @Column(name = "new_nickname", nullable = false, length = 30)
     private String newNickname;
 
-    @Column(name = "changed_at", nullable = false)
-    private LocalDateTime changedAt;
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
-    @Column(name = "changed_by", nullable = false)
-    private UUID changedBy;
+    @CreatedBy
+    @Column(name = "created_by", nullable = false, updatable = false)
+    private UUID createdBy;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "reason", length = 50)
@@ -44,16 +54,12 @@ public class UserNicknameHistory {
             UUID userId,
             String oldNickname,
             String newNickname,
-            UUID changedBy,
             NicknameChangeReason reason
     ) {
         UserNicknameHistory history = new UserNicknameHistory();
-        history.id = UUID.randomUUID();
         history.userId = userId;
         history.oldNickname = oldNickname;
         history.newNickname = newNickname;
-        history.changedAt = LocalDateTime.now();
-        history.changedBy = changedBy;
         history.reason = reason;
         return history;
     }

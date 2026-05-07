@@ -25,7 +25,7 @@ public class UserNicknameHistoryRepositoryAdapter implements UserNicknameHistory
     }
 
     @Override
-    public Optional<UserNicknameHistory> findFirstByUserIdOrderByChangedAtDesc(UUID userId) {
-        return jpaRepository.findFirstByUserIdAndReasonInOrderByChangedAtDesc(userId, SELF_CHANGE_REASONS);
+    public Optional<UserNicknameHistory> findFirstByUserIdOrderByCreatedAtDesc(UUID userId) {
+        return jpaRepository.findFirstByUserIdAndReasonInOrderByCreatedAtDesc(userId, SELF_CHANGE_REASONS);
     }
 }

@@ -11,7 +11,7 @@ public interface JpaUserNicknameHistoryRepository extends JpaRepository<UserNick
     /**
      * 특정 유저의 이력 중 가장 최근(Desc) 1건(First)만 조회
      */
-    Optional<UserNicknameHistory> findFirstByUserIdAndReasonInOrderByChangedAtDesc(UUID userId,
+    Optional<UserNicknameHistory> findFirstByUserIdAndReasonInOrderByCreatedAtDesc(UUID userId,
                                                                                    List<NicknameChangeReason> selfChangeReasons);
 
 }
