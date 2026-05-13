@@ -2,8 +2,11 @@ package com.pagely.userservice.presentation.controller;
 
 import com.pagely.common.response.ApiResponse;
 import com.pagely.userservice.application.dto.query.UserSearchCondition;
+import com.pagely.userservice.application.service.UserCredentialApplicationService;
 import com.pagely.userservice.application.service.UserQueryService;
+import com.pagely.userservice.presentation.dto.request.VerifyCredentialsRequest;
 import com.pagely.userservice.presentation.dto.response.UserInfoResponse;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +15,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,6 +31,25 @@ import org.springframework.web.bind.annotation.RestController;
 public class InternalUserController {
 
     private final UserQueryService userQueryService;
+
+    private final UserCredentialApplicationService credentialService;
+
+    /**
+     * <b>
+     * 자격 검증 (Auth Service 의 로그인 흐름에서 호출)
+     * </b>
+     *
+     */
+    @PostMapping("/credential-verifications")
+    public ResponseEntity<ApiResponse> verifyCredentials(
+            @Valid @RequestBody VerifyCredentialsRequest request
+    ) {
+        return ApiResponse.ok(
+                credentialService.verifyCredentials(
+                        request.toCommand()
+                )
+        );
+    }
 
     /**
      * <b>내부 서비스용 단건 조회</b>
