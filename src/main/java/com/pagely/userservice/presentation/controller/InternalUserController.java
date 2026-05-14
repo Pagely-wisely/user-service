@@ -52,6 +52,21 @@ public class InternalUserController {
     }
 
     /**
+     * <b>
+     * 자격 조회 (Auth Service 의 토큰 재발급 등 에서 호출)
+     * </b>
+     *
+     */
+    @GetMapping("{userId}/auth-info")
+    public ResponseEntity<ApiResponse> getUserIdentity(
+            @PathVariable UUID userId
+    ) {
+        return ApiResponse.ok(
+                credentialService.getUserIdentity(userId)
+        );
+    }
+
+    /**
      * <b>내부 서비스용 단건 조회</b>
      * <ul>
      * <li><b>용도:</b> 특정 유저의 기본 프로필 정보가 필요할 때 사용 (모임원 정보 등)</li>

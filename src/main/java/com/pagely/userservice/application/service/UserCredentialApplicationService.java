@@ -7,6 +7,7 @@ import com.pagely.userservice.domain.model.User;
 import com.pagely.userservice.domain.repository.UserRepository;
 import com.pagely.userservice.domain.service.PasswordEncoder;
 import com.pagely.userservice.presentation.dto.response.CredentialsVerificationResponse;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -43,6 +44,25 @@ public class UserCredentialApplicationService {
             throw new BusinessException(UserErrorCode.INVALID_CREDENTIALS);
         }
 
+        if (user.isSuspended()) {
+            throw new BusinessException(UserErrorCode.USER_SUSPENDED);
+        }
+
         return CredentialsVerificationResponse.of(user.getId(), user.getRole());
+    }
+
+    @Transactional(readOnly = true)
+    public CredentialsVerificationResponse getUserIdentity(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    log.debug("자격 정보 조회 실패 — 사용자 없음");
+                    return new BusinessException(UserErrorCode.USER_NOT_FOUND);
+                });
+
+        if (user.isSuspended()) {
+            throw new BusinessException(UserErrorCode.USER_SUSPENDED);
+        }
+
+        return CredentialsVerificationResponse.of(userId, user.getRole());
     }
 }
