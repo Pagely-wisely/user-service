@@ -24,9 +24,8 @@ spring:
     locations: classpath:db/migration
     baseline-on-migrate: true
 
-
-  kafka: # 이벤트 발행 시 kafka message header에 __TypeId__ 발행을 하지 않고, Json String으로 발행
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:pagely-kafka:9092}
+kafka:
+    bootstrap-servers: ${KAFKA_EXTERNAL_HOST:host.docker.internal}:${KAFKA_EXTERNAL_PORT}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer #수신 서버에서 ObjectMapper 를 활용하여 수신 서버의 적절한 클래스로 직접 매핑
       value-serializer: org.apache.kafka.common.serialization.StringSerializer # User 서비스에서는 직렬화된 상태로 발행
