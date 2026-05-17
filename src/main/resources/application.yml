@@ -28,7 +28,7 @@ spring:
 
 
   kafka: # 이벤트 발행 시 kafka message header에 __TypeId__ 발행을 하지 않고, Json String으로 발행
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    bootstrap-servers: ${KAFKA_EXTERNAL_HOST:localhost:9092}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer #수신 서버에서 ObjectMapper 를 활용하여 수신 서버의 적절한 클래스로 직접 매핑
       #  value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
