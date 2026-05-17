@@ -51,7 +51,7 @@ logging:
 eureka:
   instance:
     prefer-ip-address: true
-    instance-id: ${spring.application.name}:${server.port}:${random.value}
+    hostname: ${HOSTNAME:localhost}
   client:
     register-with-eureka: true
     fetch-registry: true
