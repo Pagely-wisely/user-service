@@ -4,8 +4,6 @@ server:
 spring:
   application:
     name: userservice
-  profiles:
-    active: prod
   config:
     import:
       - optional:configserver:${CONFIG_SERVER_URL:http://pagely-config:8888}
