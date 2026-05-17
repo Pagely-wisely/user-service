@@ -5,6 +5,8 @@ spring:
   application:
     name: userservice
   config:
+    activate:
+      on-profile: prod
     import:
       - optional:configserver:${CONFIG_SERVER_URL:http://pagely-config:8888}
       - optional:classpath:.env[.properties]
