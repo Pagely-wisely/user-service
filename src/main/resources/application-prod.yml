@@ -5,9 +5,11 @@ spring:
   application:
     name: userservice
   config:
+    activate:
+      on-profile: prod
     import:
-      - optional:configserver:${CONFIG_SERVER_URL:http://pagely-config:8888}
       - optional:classpath:.env[.properties]
+      - optional:configserver:${CONFIG_SERVER_URL:http://pagely-config:8888}
   datasource:
     url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${USER_DB_NAME}
     username: ${DB_USERNAME}
@@ -23,21 +25,10 @@ spring:
     enabled: true
     locations: classpath:db/migration
     baseline-on-migrate: true
-
-
-  kafka: # 이벤트 발행 시 kafka message header에 __TypeId__ 발행을 하지 않고, Json String으로 발행
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:pagely-kafka:9092}
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer #수신 서버에서 ObjectMapper 를 활용하여 수신 서버의 적절한 클래스로 직접 매핑
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer # User 서비스에서는 직렬화된 상태로 발행
-      properties:
-        spring.json.add.type.headers: false   # TypeId 헤더 비활성화
-        # 신뢰성 보강
-        acks: all                              # 모든 ISR 에 복제 확인 후 ACK
-        retries: 3                             # 발행 실패 시 재시도 횟수
-        enable.idempotence: true               # 중복 발행 방지 (Producer 측)
-        request.timeout.ms: 5000               # 단일 요청 timeout
-        delivery.timeout.ms: 10000             # 전체 발행 timeout (retries 포함)
+    
+  kafka:
+    bootstrap-servers: ${KAFKA_EXTERNAL_HOST:host.docker.internal}:${KAFKA_EXTERNAL_PORT}
+    
 outbox:
   poll-interval-ms: 5000  # 5초
 
