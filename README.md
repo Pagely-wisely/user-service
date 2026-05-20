@@ -198,5 +198,5 @@ docker run -p 19001:19001 \
 | --- | --- |
 | `DB_URL` | PostgreSQL 주소 |
 | `DB_USERNAME` / `DB_PASSWORD` | DB 자격 |
-| `KAFKA_BROKERS` | Kafka 브로커 |
+| `KAFKA_EXTERNAL_HOST` / `KAFKA_EXTERNAL_PORT` | Kafka 브로커 |
 | `EUREKA_SERVER_URL` | Eureka 주소 |
